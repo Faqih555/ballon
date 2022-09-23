@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+*{
+    text-align: center;
+}
+.border{
+    border: solid #032361;
+    width: 1360px;
+    height: 600px;
+    margin-top: 8px;
+    background: url("backgroundsky.png");
+    background-size: cover;
+}
+#tengah{
+    margin-top: 330px;
+    margin-bottom: 70px;
+}
+div{
+    text-align: center;
+    margin-top: 20px;
+}
+#button{
+    width: 282px;
+    height: 45.63px;
+    background:skyblue;
+    border-radius:59px;
+    font-family: 'Iner';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 24px;
+    background: skyblue;
+    animation: Arestart 1.5s cubic-bezier(0.68,-0.55,0.27,1.55);;
+}
+#restart{
+    position: fixed;
+    border-radius: 10px;
+    width: 300px;
+    height: 210px;
+    background: rgb(186, 198, 238);
+    top: 50%;
+    left: 51%;
+    transform: translate(-50%,-50%);
+}
+#win{
+    position: fixed;
+    border-radius: ;
+}
+
+.lvl{
+    width: 70px;
+    height: 70px;
+    background: skyblue;
+    border-radius: 5px;
+    margin: 10px;
+    font-size: 20px;
+}
+
+.buttonrst{
+    width: 200px;
+    height: 50px;
+    background:skyblue;
+    border-radius:59px;
+    font-family: 'Iner';
+    font-style: normal;
+}
+
+.button{
+    width: 282px;
+    height: 45.63px;
+    background:skyblue;
+    border-radius:59px;
+    font-family: 'Iner';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 24px;
+}
+.buttonlvl{
+    width: 200px;
+    height: 45.63px;
+    background:skyblue;
+    border-radius:59px;
+    font-family: 'Iner';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 24px;
+}
+button:active{
+    background:#032361;
+    color: rgba(82,156,160,0.78)
+}
+canvas {
+    border:1px solid black;
+}
+
+</style>
+</head>
+<body> 
+    
+    <div class="border">
+        <div id="tengah">
+            <div>
+                <button onclick="level()" display="none" class="button">PLAY</button>
+            </div>
+        <div>
+            <button onclick="pilihLevel()"  class="buttonlvl" display="none">LEVEL</button>
+        </div>
+        <div id="level" style="display:none">
+            <button onclick="level(1)" class="lvl"> 1</button>
+            <button onclick="level(2)" class="lvl"> 2</button>
+            <button onclick="level(3)" class="lvl"> 3</button>
+        </div>
+    </div>
+</div>
+<div id="restart" style="display: none;">
+<h1 >GA USAH MAIN KALO GK BISA!</h1><br>
+<button onclick="startGame()" class="buttonrst">RESTART</button>
+</div>
+
+    <!--<button id="restart" onclick="starGame()"
+    display="none"></button>-->
+<script>
+
+var myGamePiece;
+var myObstacles = [];
+var myScore;
+var myBackground;
+var map = document.querySelector('.border');
+var LEVEL = document.getElementById('level');
+var pilihan;
+
+function rst(){
+    document.querySelector('#restart').style.display = "none";
+}
+function level(stage){
+    LEVEL.style.display = "none"
+    pilihan = stage;
+    rst();
+}
+function startGame() {
+    myGamePiece = new component(45, 70, "balonudara1.png", 10, 120, "image");
+    if(kesulitan==3){
+        myBackground = new component(1360, 600, "backgroundlvl1dan3.png", 0, 0, "image");
+    }else if(kesulitan==2){
+        myBackground = new component(1360, 600, "backgroundlvl2.png", 0, 0, "image");
+    }else{
+        myBackground = new component(1360, 600, "backgroundlvl1dan3.png", 0, 0, "image");
+    }
+
+    myObstacle = new component(10, 200, "rintangan.png", 300, 120,"image");
+    myScore = new component("30px", "Consolas", "black", 600, 40, "text");
+    myGameArea.start();
+
+    map.style.display= "none";
+    document.getElementById('restart').style.display = "none";
+    myObstacles.splice(0,myObstacles.length)
+}
+function pilihLevel(){
+    LEVEL.style.display ="";
+    document.querySelector('div .button').style.display ='none';
+    document.querySelector('div .buttonlvl').style.display ='none';
+}
+
+function level(tingkat){
+    LEVEL.style.display ="";
+    kesulitan=tingkat
+    startGame();
+}
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 1360;
+        this.canvas.height = 600;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        window.addEventListener('keydown', function (e) {
+      myGameArea.key = e.keyCode;
+    })
+    window.addEventListener('keyup', function (e) {
+      myGameArea.key = false;
+    })
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    stop : function() {
+        clearInterval(this.interval);
+        document.getElementById('restart').style.display = "";
+        document.getElementById('skor').innerHTML = this.frameNo;
+    }
+}
+
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    if (type == "image") {
+    this.image = new Image();
+    this.image.src = color;
+    }
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+        ctx = myGameArea.context;
+        if (this.type=="text"){
+            ctx.font = this.width+" "+this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text,this.x,this.y);
+        }
+        ctx = myGameArea.context;
+        if (type == "image") {
+        ctx.drawImage(this.image,
+        this.x,
+        this.y,
+        this.width, this.height);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;        
+    }
+    this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
+}
+
+function updateGameArea() {
+    var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+    for (i = 0; i < myObstacles.length; i += 1) {
+        if (myGamePiece.crashWith(myObstacles[i])) {
+            myGameArea.stop();
+            document.querySelector('#restart h1').innerHTML = "selamat";
+            return;
+        } 
+    }if(myGameArea.frameNo==1000){
+        myGameArea.stop();
+
+    }
+    myGameArea.clear();
+    if(kesulitan==3 || kesulitan==2){
+        myGamePiece.speedX = 0;
+        myGamePiece.speedY = 0;
+        if (myGameArea.key && myGameArea.key == 65) {myGamePiece.speedX = -2; }
+        if (myGameArea.key && myGameArea.key == 68) {myGamePiece.speedX = 2; }
+        if (myGameArea.key && myGameArea.key == 87) {myGamePiece.speedY = -2; myGamePiece.image.src = "balonudara2.png";}
+        if (myGameArea.key && myGameArea.key == 83) {myGamePiece.speedY = 2; myGamePiece.image.src = "balonudara1.png";}
+    }else{
+        myGamePiece.speedX = 0;
+        myGamePiece.speedY = 0;
+        if (myGameArea.key && myGameArea.key == 65) {myGamePiece.speedX = -1; }
+        if (myGameArea.key && myGameArea.key == 68) {myGamePiece.speedX = 1; }
+        if (myGameArea.key && myGameArea.key == 87) {myGamePiece.speedY = -1; myGamePiece.image.src = "balonudara2.png";}
+        if (myGameArea.key && myGameArea.key == 83) {myGamePiece.speedY = 1; myGamePiece.image.src = "balonudara1.png";}
+    }
+    myObstacle.update();
+    myBackground.newPos();
+    myBackground.update();
+    myGameArea.frameNo += 1;
+    if(kesulitan==3){
+        if (myGameArea.frameNo == 1 || everyinterval(50)) {
+        x = myGameArea.canvas.width;
+        size = Math.random()*(50-30)+30;
+        i = Math.round(Math.random()*2+1);//index obs
+        random=Math.floor(Math.random()*300);
+        random1=Math.floor(Math.random()*300+300);
+        myObstacles.push(new component(size+40,size,"burung.png",x,random,"image"));//posisi tertinggi 0
+        myObstacles.push(new component(size+40,size,"burung.png",x+80,random1,"image"));//posisi terendah 240
+    }
+    }else if(kesulitan==2){
+        if (myGameArea.frameNo == 1 || everyinterval(80)) {
+        x = myGameArea.canvas.width;
+        size = Math.random()*(50-30)+30;
+        i = Math.round(Math.random()*2+1);//index obs
+        random=Math.floor(Math.random()*300);
+        random1=Math.floor(Math.random()*300+300);
+        myObstacles.push(new component(size+40,size,"burung.png",x,random,"image"));//posisi tertinggi 0
+        myObstacles.push(new component(size+40,size,"burung.png",x+80,random1,"image"));//posisi terendah 240
+    }
+    }else{
+        if (myGameArea.frameNo == 1 || everyinterval(200)) {
+        x = myGameArea.canvas.width;
+        size = Math.random()*(50-30)+30;
+        i = Math.round(Math.random()*2+1);//index obs
+        random=Math.floor(Math.random()*300);
+        random1=Math.floor(Math.random()*300+300);
+        myObstacles.push(new component(size+40,size,"burung.png",x,random,"image"));//posisi tertinggi 0
+        myObstacles.push(new component(size+40,size,"burung.png",x+80,random1,"image"));//posisi terendah 240
+    }
+    }
+    for (i = 0; i < myObstacles.length; i += 1) {
+        if(kesulitan==3){
+            myObstacles[i].x+= -10;//kecepatan obstacle LEVEL 3
+        } else if(kesulitan==2){///
+            myObstacles[i].x+= -5;//kecepatan obstacle LEVEL 2
+        } else{
+            myObstacles[i].x+= -2;//kecepatan obstacle LEVEL 2
+        }
+        myObstacles[i].newPos();
+        myObstacles[i].update();
+    }
+    myScore.text="SCORE: " + myGameArea.frameNo;
+    myScore.update();
+    myGamePiece.newPos();    
+    myGamePiece.update();
+    }
+  
+
+
+
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+
+</script>
+</body>
+</html>
